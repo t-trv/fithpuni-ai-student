@@ -1,0 +1,13 @@
+Đây là file text mẫu để test AI Summary application.
+
+Công nghệ Trí tuệ Nhân tạo (AI)
+
+Trí tuệ nhân tạo (AI) là một lĩnh vực của khoa học máy tính tập trung vào việc tạo ra các hệ thống có khả năng thực hiện các nhiệm vụ đòi hỏi trí thông minh của con người. Các nhiệm vụ này bao gồm học tập, suy luận, giải quyết vấn đề, nhận thức và hiểu ngôn ngữ tự nhiên.
+
+Lịch sử phát triển của AI bắt đầu từ những năm 1950 khi các nhà khoa học bắt đầu nghĩ về khả năng tạo ra máy móc có thể "suy nghĩ". Thuật ngữ "trí tuệ nhân tạo" được đặt ra vào năm 1956 tại Hội nghị Dartmouth. Từ đó đến nay, AI đã trải qua nhiều giai đoạn phát triển với những thăng trầm.
+
+Ngày nay, AI được ứng dụng rộng rãi trong nhiều lĩnh vực như y tế, giáo dục, kinh doanh, và giải trí. Machine Learning và Deep Learning là hai nhánh quan trọng của AI hiện đại. Các mô hình ngôn ngữ lớn (LLM) như GPT, Claude, và Llama đang thay đổi cách chúng ta tương tác với máy tính.
+
+AI có tiềm năng to lớn trong việc giải quyết các vấn đề phức tạp của nhân loại, từ khám phá thuốc mới, dự đoán biến đổi khí hậu, đến tối ưu hóa giao thông và năng lượng. Tuy nhiên, AI cũng đặt ra nhiều thách thức về đạo đức, an ninh và tác động đến việc làm.
+
+Việc học về AI ngày càng trở nên quan trọng trong thế kỷ 21. Với các công cụ như Ollama, giờ đây ai cũng có thể chạy các mô hình AI mạnh mẽ ngay trên máy tính cá nhân của mình mà không cần kết nối internet hay API key đắt đỏ.
