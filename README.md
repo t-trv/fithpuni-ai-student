@@ -1,6 +1,6 @@
 # 🤖 AI Summary Application
 
-Ứng dụng đơn giản để học về AI - Tóm tắt văn bản sử dụng Ollama local models
+Ứng dụng đơn giản để học về AI - Tóm tắt, hỏi đáp về văn bản sử dụng Ollama local models
 
 ## 📖 Giới thiệu
 
@@ -22,7 +22,7 @@
 ## 📋 Yêu cầu
 
 ### 1. Ollama
-Bạn cần cài đặt Ollama và tải xuống các model. Bạn đã có sẵn các model:
+Bạn cần cài đặt Ollama và tải xuống các model. Bạn đã có sẵn các model: (Recommend chỉ nên tải llama3.2:1b, khá ổn cho local, không quá chậm và kết quả trả lời ổn)
 - `tinyllama:latest`
 - `llama3.2:1b` (được dùng mặc định)
 - `gpt-oss:20b`
@@ -218,12 +218,12 @@ Bạn có thể thêm hỗ trợ cho `.html`, `.md`, etc. bằng cách:
 
 Sau khi hiểu code, bạn có thể thử:
 
-1. ✏️ Thêm nút "Copy" để copy kết quả vào clipboard
-2. 💾 Thêm nút "Save" để lưu tóm tắt ra file
-3. 🌍 Thêm option để dịch sang ngôn ngữ khác
-4. 📊 Hiển thị số từ gốc vs số từ tóm tắt
-5. ⚙️ Thêm thanh slider để điều chỉnh độ dài tóm tắt
-6. 📝 Thêm tab mới cho "Ask Questions" về văn bản
+1. ✏️ Thêm nút "Copy" để copy kết quả vào clipboard (Đã có sẵn, tuy nhiên nên tự làm để hiểu hơn về project)
+2. 💾 Thêm nút "Save" để lưu tóm tắt ra file (Đã có sẵn, tuy nhiên nên tự làm để hiểu hơn về project)
+3. 🌍 Thêm option để dịch sang ngôn ngữ khác (Đã có sẵn cho tiếng Anh, tuy nhiên nên tự làm để hiểu hơn về project)
+4. 📊 Hiển thị số từ gốc vs số từ tóm tắt (Đã có sẵn, tuy nhiên nên tự làm để hiểu hơn về project)
+5. ⚙️ Thêm thanh slider để điều chỉnh độ dài tóm tắt (Đã có sẵn, tuy nhiên nên tự làm để hiểu hơn về project)
+6. 📝 Thêm tab mới cho "Ask Questions" về văn bản (Đã có sẵn, tuy nhiên nên tự làm để hiểu hơn về project)
 7. 🎨 Tùy chỉnh theme/màu sắc của UI
 
 ## 📝 License
