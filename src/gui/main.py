@@ -7,7 +7,6 @@ Design inspired by Ollama - Radical minimalism, pure grayscale
 
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, ttk
-import tkinter.font as tkfont
 import threading
 from datetime import datetime
 from ..logic.file_reader import FileReader
@@ -16,34 +15,15 @@ from ..logic.ai_summarizer import AISummarizer
 
 # Ollama Design System Colors
 class OllamaColors:
-    # Primary
     PURE_BLACK = "#000000"
     NEAR_BLACK = "#262626"
-    DARKEST_SURFACE = "#090909"
-
-    # Surface & Background
     PURE_WHITE = "#ffffff"
     SNOW = "#fafafa"
     LIGHT_GRAY = "#e5e5e5"
-
-    # Neutrals & Text
     STONE = "#737373"
     MID_GRAY = "#525252"
     SILVER = "#a3a3a3"
     BUTTON_TEXT_DARK = "#404040"
-
-    # Focus
-    RING_BLUE = "#3b82f6"
-    BORDER_LIGHT = "#d4d4d4"
-
-
-# Font definitions - using standard Windows fonts with fallback
-TITLE_FONT = ("Segoe UI", 24, "normal")
-SUBTITLE_FONT = ("Segoe UI", 14, "normal")
-SECTION_FONT = ("Segoe UI", 12, "normal")
-BODY_FONT = ("Segoe UI", 13, "normal")
-SMALL_FONT = ("Segoe UI", 11, "normal")
-TINY_FONT = ("Segoe UI", 10, "normal")
 
 
 class OllamaStyle:
@@ -51,28 +31,18 @@ class OllamaStyle:
 
     @staticmethod
     def configure_styles(root):
-        """Configure all ttk styles for Ollama-inspired design"""
         style = ttk.Style(root)
 
-        # Use a clean theme as base
         available_themes = style.theme_names()
         if "clam" in available_themes:
             style.theme_use("clam")
         elif "alt" in available_themes:
             style.theme_use("alt")
 
-        # ==== Frame Styles ====
+        # Frame
         style.configure("Ollama.TFrame", background=OllamaColors.PURE_WHITE)
 
-        style.configure(
-            "OllamaContainer.TFrame",
-            background=OllamaColors.SNOW,
-            relief="solid",
-            borderwidth=1,
-            bordercolor=OllamaColors.LIGHT_GRAY,
-        )
-
-        # ==== Label Styles ====
+        # Label
         style.configure(
             "Ollama.TLabel",
             background=OllamaColors.PURE_WHITE,
@@ -80,161 +50,41 @@ class OllamaStyle:
             font=("Segoe UI", 14),
         )
 
-        style.configure(
-            "OllamaTitle.TLabel",
-            background=OllamaColors.PURE_WHITE,
-            foreground=OllamaColors.PURE_BLACK,
-            font=("Segoe UI", 24, "normal"),
-            anchor="center",
-        )
-
-        style.configure(
-            "OllamaSection.TLabel",
-            background=OllamaColors.PURE_WHITE,
-            foreground=OllamaColors.PURE_BLACK,
-            font=("Segoe UI", 12, "normal"),
-        )
-
-        style.configure(
-            "OllamaMuted.TLabel",
-            background=OllamaColors.PURE_WHITE,
-            foreground=OllamaColors.STONE,
-            font=("Segoe UI", 12),
-        )
-
-        style.configure(
-            "OllamaSmall.TLabel",
-            background=OllamaColors.PURE_WHITE,
-            foreground=OllamaColors.SILVER,
-            font=("Segoe UI", 10),
-        )
-
-        # ==== Button Styles - Pill-shaped (9999px) ====
-
-        # Primary Gray Pill Button
+        # Button styles
         style.configure(
             "GrayPill.TButton",
             background=OllamaColors.LIGHT_GRAY,
             foreground=OllamaColors.NEAR_BLACK,
-            font=("Segoe UI", 13, "normal"),
-            padding=(24, 10),
+            font=("Segoe UI", 13),
+            padding=(20, 8),
             borderwidth=1,
             relief="solid",
-            bordercolor=OllamaColors.LIGHT_GRAY,
         )
-        style.map(
-            "GrayPill.TButton",
-            background=[
-                ("active", OllamaColors.MID_GRAY),
-                ("disabled", OllamaColors.SNOW),
-            ],
-            foreground=[("disabled", OllamaColors.SILVER)],
-        )
+        style.map("GrayPill.TButton", background=[("active", OllamaColors.MID_GRAY)])
 
-        # Secondary White Pill Button
+        style.configure(
+            "BlackPill.TButton",
+            background=OllamaColors.PURE_BLACK,
+            foreground=OllamaColors.PURE_WHITE,
+            font=("Segoe UI", 13),
+            padding=(20, 8),
+            borderwidth=0,
+            relief="flat",
+        )
+        style.map("BlackPill.TButton", background=[("active", OllamaColors.NEAR_BLACK)])
+
         style.configure(
             "WhitePill.TButton",
             background=OllamaColors.PURE_WHITE,
             foreground=OllamaColors.BUTTON_TEXT_DARK,
-            font=("Segoe UI", 13, "normal"),
-            padding=(24, 10),
+            font=("Segoe UI", 13),
+            padding=(20, 8),
             borderwidth=1,
             relief="solid",
-            bordercolor=OllamaColors.BORDER_LIGHT,
         )
-        style.map(
-            "WhitePill.TButton",
-            background=[
-                ("active", OllamaColors.LIGHT_GRAY),
-                ("disabled", OllamaColors.SNOW),
-            ],
-            foreground=[("disabled", OllamaColors.SILVER)],
-        )
+        style.map("WhitePill.TButton", background=[("active", OllamaColors.LIGHT_GRAY)])
 
-        # CTA Black Pill Button
-        style.configure(
-            "BlackPill.TButton",
-            background=OllamaColors.PURE_BLACK,
-            foreground=OllamaColors.PURE_WHITE,
-            font=("Segoe UI", 13, "normal"),
-            padding=(24, 10),
-            borderwidth=0,
-            relief="flat",
-        )
-        style.map(
-            "BlackPill.TButton",
-            background=[
-                ("active", OllamaColors.NEAR_BLACK),
-                ("disabled", OllamaColors.MID_GRAY),
-            ],
-        )
-
-        # Stop Button - Distinct style
-        style.configure(
-            "StopPill.TButton",
-            background=OllamaColors.PURE_BLACK,
-            foreground=OllamaColors.PURE_WHITE,
-            font=("Segoe UI", 13, "normal"),
-            padding=(24, 10),
-            borderwidth=0,
-            relief="flat",
-        )
-        style.map(
-            "StopPill.TButton",
-            background=[
-                ("active", OllamaColors.NEAR_BLACK),
-                ("disabled", OllamaColors.MID_GRAY),
-            ],
-        )
-
-        # ==== LabelFrame Styles - 12px radius containers ====
-        style.configure(
-            "Ollama.TLabelframe",
-            background=OllamaColors.PURE_WHITE,
-            foreground=OllamaColors.PURE_BLACK,
-            font=("Segoe UI", 12, "normal"),
-            labelmargins=(12, 8),
-            borderwidth=1,
-            relief="solid",
-            bordercolor=OllamaColors.LIGHT_GRAY,
-        )
-        style.configure(
-            "Ollama.TLabelframe.Label",
-            background=OllamaColors.PURE_WHITE,
-            foreground=OllamaColors.PURE_BLACK,
-            font=("Segoe UI", 11, "normal"),
-        )
-
-        # ==== Notebook Styles ====
-        style.configure(
-            "Ollama.TNotebook",
-            background=OllamaColors.PURE_WHITE,
-            borderwidth=0,
-            tabmargins=0,
-        )
-        style.configure(
-            "Ollama.TNotebook.Tab",
-            background=OllamaColors.SNOW,
-            foreground=OllamaColors.STONE,
-            font=("Segoe UI", 12),
-            padding=(16, 8),
-            borderwidth=1,
-            relief="solid",
-            bordercolor=OllamaColors.LIGHT_GRAY,
-        )
-        style.map(
-            "Ollama.TNotebook.Tab",
-            background=[
-                ("selected", OllamaColors.PURE_WHITE),
-                ("active", OllamaColors.LIGHT_GRAY),
-            ],
-            foreground=[
-                ("selected", OllamaColors.PURE_BLACK),
-                ("active", OllamaColors.NEAR_BLACK),
-            ],
-        )
-
-        # ==== Entry Styles - Pill-shaped ====
+        # Entry
         style.configure(
             "Ollama.TEntry",
             background=OllamaColors.PURE_WHITE,
@@ -242,61 +92,29 @@ class OllamaStyle:
             fieldbackground=OllamaColors.PURE_WHITE,
             borderwidth=1,
             relief="solid",
-            bordercolor=OllamaColors.LIGHT_GRAY,
-            insertcolor=OllamaColors.PURE_BLACK,
             padding=(12, 8),
-            font=("Segoe UI", 12),
-        )
-        style.map(
-            "Ollama.TEntry",
-            fieldbackground=[("focus", OllamaColors.PURE_WHITE)],
-            bordercolor=[("focus", OllamaColors.NEAR_BLACK)],
+            font=("Segoe UI", 13),
         )
 
-        # ==== Combobox Styles ====
+        # Combobox
         style.configure(
             "Ollama.TCombobox",
             background=OllamaColors.PURE_WHITE,
-            foreground=OllamaColors.PURE_BLACK,
             fieldbackground=OllamaColors.PURE_WHITE,
             borderwidth=1,
             relief="solid",
-            bordercolor=OllamaColors.LIGHT_GRAY,
             padding=(8, 6),
-            font=("Segoe UI", 12),
-        )
-        style.map(
-            "Ollama.TCombobox",
-            fieldbackground=[
-                ("readonly", OllamaColors.PURE_WHITE),
-                ("focus", OllamaColors.PURE_WHITE),
-            ],
-            bordercolor=[("focus", OllamaColors.NEAR_BLACK)],
-            arrowcolor=[("active", OllamaColors.PURE_BLACK)],
         )
 
-        # ==== Radiobutton Styles ====
+        # Radiobutton
         style.configure(
             "Ollama.TRadiobutton",
             background=OllamaColors.PURE_WHITE,
             foreground=OllamaColors.PURE_BLACK,
             font=("Segoe UI", 12),
-            padding=(8, 4),
-            indicatorbackground=OllamaColors.PURE_WHITE,
-            indicatorforeground=OllamaColors.PURE_BLACK,
-            indicatormargin=(0, 0, 8, 0),
-        )
-        style.map(
-            "Ollama.TRadiobutton",
-            background=[("selected", OllamaColors.PURE_WHITE)],
-            foreground=[
-                ("selected", OllamaColors.PURE_BLACK),
-                ("active", OllamaColors.NEAR_BLACK),
-            ],
-            indicatorcolor=[("selected", OllamaColors.PURE_BLACK)],
         )
 
-        # ==== Scale/Slider Styles ====
+        # Scale
         style.configure(
             "Ollama.Horizontal.TScale",
             background=OllamaColors.PURE_WHITE,
@@ -306,7 +124,7 @@ class OllamaStyle:
             thickness=4,
         )
 
-        # ==== Progressbar Styles ====
+        # Progressbar
         style.configure(
             "Ollama.Horizontal.TProgressbar",
             background=OllamaColors.LIGHT_GRAY,
@@ -322,17 +140,14 @@ class AISummaryApp:
     """Main application class with Ollama-inspired UI"""
 
     def __init__(self, root):
-        """Initialize application interface"""
         self.root = root
         self.root.title("FITHPUni AI Student")
-        self.root.geometry("900x800")
+        self.root.geometry("1000x750")
         self.root.configure(bg=OllamaColors.PURE_WHITE)
-        self.root.minsize(800, 700)
+        self.root.minsize(900, 650)
 
-        # Configure styles
         self.style = OllamaStyle.configure_styles(self.root)
 
-        # Initialize components
         self.file_reader = FileReader()
         self.ai_summarizer = AISummarizer()
         self.current_file = None
@@ -340,43 +155,312 @@ class AISummaryApp:
         self.original_content = ""
         self.original_word_count = 0
         self.summary_word_count = 0
-        self.summary_thread = None
         self.stop_event = threading.Event()
-
-        # Translation cache
         self.translation_cache = {}
         self.original_summary = None
-        self.current_summary_language = "original"
 
-        # Create interface
-        self.create_widgets()
+        # Shared variables for all views
+        self.model_var = tk.StringVar(value=self.ai_summarizer.model_name)
+        self.length_var = tk.IntVar(value=500)
+        self.summary_type = tk.StringVar(value="normal")
+        self.translate_var = tk.StringVar(value="none")
 
-    def _create_pill_entry(self, parent, **kwargs):
-        """Create a pill-shaped entry widget"""
-        entry = ttk.Entry(parent, style="Ollama.TEntry", **kwargs)
-        # Apply rounded corners via grid sticky
-        return entry
+        self.current_view = "chat"
 
-    def create_widgets(self):
-        """Create all UI widgets following Ollama design"""
+        self.create_menu()
+        self.create_main_container()
+        self.show_view("chat")
 
-        # Main container - pure white background
-        main_container = tk.Frame(self.root, bg=OllamaColors.PURE_WHITE)
-        main_container.pack(fill=tk.BOTH, expand=True, padx=32, pady=24)
+    def create_menu(self):
+        """Create menu bar"""
+        menubar = tk.Menu(
+            self.root,
+            bg=OllamaColors.PURE_WHITE,
+            fg=OllamaColors.PURE_BLACK,
+            font=("Segoe UI", 11),
+            bd=0,
+            relief="flat",
+        )
+        self.root.config(menu=menubar)
 
-        # ==== HEADER SECTION ====
-        header_frame = tk.Frame(main_container, bg=OllamaColors.PURE_WHITE)
-        header_frame.pack(fill=tk.X, pady=(0, 24))
+        # Chế độ menu - để chuyển đổi giữa các chế độ
+        mode_menu = tk.Menu(
+            menubar,
+            tearoff=0,
+            bg=OllamaColors.PURE_WHITE,
+            fg=OllamaColors.PURE_BLACK,
+            font=("Segoe UI", 11),
+        )
+        menubar.add_cascade(label="Chế độ", menu=mode_menu)
+        mode_menu.add_command(label="Chat", command=lambda: self.show_view("chat"))
+        mode_menu.add_command(
+            label="Tóm tắt file", command=lambda: self.show_view("summary")
+        )
+        mode_menu.add_separator()
+        mode_menu.add_command(
+            label="Cấu hình...", command=lambda: self.show_view("config")
+        )
 
-        # ==== FILE SELECTION SECTION ====
-        file_section = tk.Frame(main_container, bg=OllamaColors.PURE_WHITE)
-        file_section.pack(fill=tk.X, pady=(0, 16))
+        # File menu
+        file_menu = tk.Menu(
+            menubar,
+            tearoff=0,
+            bg=OllamaColors.PURE_WHITE,
+            fg=OllamaColors.PURE_BLACK,
+            font=("Segoe UI", 11),
+        )
+        menubar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Mở file...", command=self.open_file_and_switch)
+        file_menu.add_separator()
+        file_menu.add_command(label="Thoát", command=self.root.quit)
+
+        # Trợ giúp menu
+        help_menu = tk.Menu(
+            menubar,
+            tearoff=0,
+            bg=OllamaColors.PURE_WHITE,
+            fg=OllamaColors.PURE_BLACK,
+            font=("Segoe UI", 11),
+        )
+        menubar.add_cascade(label="Trợ giúp", menu=help_menu)
+        help_menu.add_command(label="Hướng dẫn", command=self.show_help)
+        help_menu.add_command(label="Giới thiệu", command=self.show_about)
+
+    def open_file_and_switch(self):
+        """Open file dialog and switch to summary view"""
+        self.show_view("summary")
+        self.select_file()
+
+    def show_help(self):
+        help_text = """HƯỚNG DẪN SỬ DỤNG
+
+1. CHAT (menu Chế độ > Chat)
+   - Chat trực tiếp với AI
+   - Nhập câu hỏi và nhấn Enter
+
+2. TÓM TẮT FILE (menu Chế độ > Tóm tắt file)
+   - Tải file lên và tóm tắt
+   - Hỏi đáp về nội dung file
+
+3. CẤU HÌNH (menu Chế độ > Cấu hình)
+   - Chọn model AI
+   - Đặt độ dài tóm tắt mặc định
+
+Phím tắt:
+- Menu Chế độ để chuyển chế độ
+- Menu File > Mở file để tải file
+"""
+        messagebox.showinfo("Hướng dẫn", help_text)
+
+    def show_about(self):
+        messagebox.showinfo(
+            "Giới thiệu",
+            "FITHPUni AI Student v1.0\n\nỨng dụng tóm tắt văn bản sử dụng AI\n© 2026",
+        )
+
+    def create_main_container(self):
+        """Create main container"""
+        self.main_container = tk.Frame(self.root, bg=OllamaColors.PURE_WHITE)
+        self.main_container.pack(fill=tk.BOTH, expand=True, padx=32, pady=16)
+
+        # Content frame (will be switched between views)
+        self.content_frame = tk.Frame(self.main_container, bg=OllamaColors.PURE_WHITE)
+        self.content_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Create all views (hidden initially)
+        self.chat_view = None
+        self.config_view = None
+        self.summary_view = None
+
+        # Status bar
+        self.create_status_bar()
+
+    def show_view(self, view_name):
+        """Switch between views"""
+        self.current_view = view_name
+
+        # Clear content frame
+        for widget in self.content_frame.winfo_children():
+            widget.destroy()
+
+        if view_name == "chat":
+            self.create_chat_view()
+        elif view_name == "config":
+            self.create_config_view()
+        elif view_name == "summary":
+            self.create_summary_view()
+
+    def create_chat_view(self):
+        """Create chat view"""
+        chat_container = tk.Frame(self.content_frame, bg=OllamaColors.PURE_WHITE)
+        chat_container.pack(fill=tk.BOTH, expand=True)
+
+        # Chat history area
+        chat_frame = tk.Frame(
+            chat_container, bg=OllamaColors.SNOW, relief="solid", bd=1
+        )
+        chat_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 16))
+
+        self.chat_scroll = scrolledtext.ScrolledText(
+            chat_frame,
+            wrap=tk.WORD,
+            font=("Segoe UI", 13),
+            bg=OllamaColors.SNOW,
+            fg=OllamaColors.PURE_BLACK,
+            relief="flat",
+            bd=0,
+            padx=20,
+            pady=20,
+            state="disabled",
+        )
+        self.chat_scroll.pack(fill=tk.BOTH, expand=True)
+
+        self.chat_scroll.tag_configure(
+            "user", justify="right", lmargin1=100, lmargin2=20, rmargin=20
+        )
+        self.chat_scroll.tag_configure(
+            "ai", justify="left", lmargin1=20, lmargin2=20, rmargin=100
+        )
+        self.chat_scroll.tag_configure(
+            "timestamp",
+            foreground=OllamaColors.SILVER,
+            font=("Segoe UI", 9),
+            justify="center",
+        )
+        self.chat_scroll.tag_configure(
+            "system",
+            foreground=OllamaColors.STONE,
+            font=("Segoe UI", 11, "italic"),
+            justify="center",
+        )
+
+        # Welcome message
+        self.chat_scroll.config(state="normal")
+        self.chat_scroll.insert(tk.END, "\n" + "=" * 60 + "\n", "system")
+        self.chat_scroll.insert(
+            tk.END, "Xin chào, tôi là AI Assistant của FITHPUni!\n", "system"
+        )
+        self.chat_scroll.insert(
+            tk.END, "Tôi sẽ giúp bạn tư vấn về nội dung các môn học.\n", "system"
+        )
+        self.chat_scroll.insert(tk.END, "=" * 60 + "\n\n", "system")
+        self.chat_scroll.config(state="disabled")
+
+        # Input area
+        input_frame = tk.Frame(chat_container, bg=OllamaColors.PURE_WHITE)
+        input_frame.pack(fill=tk.X, pady=(0, 8))
+        input_frame.columnconfigure(0, weight=1)
+
+        self.chat_entry = ttk.Entry(
+            input_frame, style="Ollama.TEntry", font=("Segoe UI", 13)
+        )
+        self.chat_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 12))
+        self.chat_entry.bind("<Return>", lambda e: self.send_chat_message())
+
+        self.send_btn = ttk.Button(
+            input_frame,
+            text="Gửi",
+            style="BlackPill.TButton",
+            command=self.send_chat_message,
+        )
+        self.send_btn.grid(row=0, column=1)
+
+        self.chat_model_label = tk.Label(
+            input_frame,
+            text=f"Model: {self.ai_summarizer.model_name}",
+            font=("Segoe UI", 10),
+            fg=OllamaColors.SILVER,
+            bg=OllamaColors.PURE_WHITE,
+        )
+        self.chat_model_label.grid(row=0, column=2, padx=(16, 0))
+
+    def create_config_view(self):
+        """Create configuration view"""
+        config_container = tk.Frame(self.content_frame, bg=OllamaColors.PURE_WHITE)
+        config_container.pack(fill=tk.BOTH, expand=True, padx=40, pady=40)
+
+        tk.Label(
+            config_container,
+            text="Cấu hình",
+            font=("Segoe UI", 20, "normal"),
+            fg=OllamaColors.PURE_BLACK,
+            bg=OllamaColors.PURE_WHITE,
+        ).pack(anchor="w", pady=(0, 32))
+
+        # Model section
+        model_frame = tk.Frame(
+            config_container, bg=OllamaColors.SNOW, relief="solid", bd=1
+        )
+        model_frame.pack(fill=tk.X, pady=(0, 24), ipady=16, ipadx=16)
+
+        tk.Label(
+            model_frame,
+            text="Model AI",
+            font=("Segoe UI", 12, "bold"),
+            fg=OllamaColors.PURE_BLACK,
+            bg=OllamaColors.SNOW,
+        ).pack(anchor="w", pady=(0, 12))
+
+        self.model_var = tk.StringVar(value=self.ai_summarizer.model_name)
+        self.model_combo = ttk.Combobox(
+            model_frame,
+            textvariable=self.model_var,
+            values=self.ai_summarizer.get_available_models(),
+            state="readonly",
+            width=30,
+            style="Ollama.TCombobox",
+        )
+        self.model_combo.pack(anchor="w")
+
+        # Length section
+        length_frame = tk.Frame(
+            config_container, bg=OllamaColors.SNOW, relief="solid", bd=1
+        )
+        length_frame.pack(fill=tk.X, pady=(0, 24), ipady=16, ipadx=16)
+
+        tk.Label(
+            length_frame,
+            text="Độ dài tóm tắt mặc định",
+            font=("Segoe UI", 12, "bold"),
+            fg=OllamaColors.PURE_BLACK,
+            bg=OllamaColors.SNOW,
+        ).pack(anchor="w", pady=(0, 12))
+
+        length_row = tk.Frame(length_frame, bg=OllamaColors.SNOW)
+        length_row.pack(anchor="w")
+
+        self.length_var = tk.IntVar(value=500)
+        self.length_slider = ttk.Scale(
+            length_row,
+            from_=100,
+            to=1000,
+            variable=self.length_var,
+            orient=tk.HORIZONTAL,
+            length=300,
+            style="Ollama.Horizontal.TScale",
+            command=self.update_length_label,
+        )
+        self.length_slider.pack(side=tk.LEFT)
+
+        self.length_label = tk.Label(
+            length_row,
+            text="500 từ",
+            font=("Segoe UI", 12),
+            fg=OllamaColors.STONE,
+            bg=OllamaColors.SNOW,
+            width=10,
+        )
+        self.length_label.pack(side=tk.LEFT, padx=(16, 0))
+
+    def create_summary_view(self):
+        """Create summary view"""
+        summary_container = tk.Frame(self.content_frame, bg=OllamaColors.PURE_WHITE)
+        summary_container.pack(fill=tk.BOTH, expand=True)
 
         # File selection row
-        file_row = tk.Frame(file_section, bg=OllamaColors.PURE_WHITE)
-        file_row.pack(fill=tk.X)
+        file_row = tk.Frame(summary_container, bg=OllamaColors.PURE_WHITE)
+        file_row.pack(fill=tk.X, pady=(0, 16))
 
-        # Select file button - Gray Pill
         self.select_btn = ttk.Button(
             file_row,
             text="Chọn File",
@@ -385,7 +469,6 @@ class AISummaryApp:
         )
         self.select_btn.pack(side=tk.LEFT)
 
-        # File name label
         self.file_label = tk.Label(
             file_row,
             text="Chưa chọn file nào",
@@ -396,7 +479,6 @@ class AISummaryApp:
         )
         self.file_label.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(16, 0))
 
-        # Word count label
         self.word_count_label = tk.Label(
             file_row,
             text="",
@@ -406,134 +488,55 @@ class AISummaryApp:
         )
         self.word_count_label.pack(side=tk.LEFT, padx=(16, 0))
 
-        # ==== CONFIGURATION SECTION ====
-        config_container = tk.Frame(main_container, bg=OllamaColors.PURE_WHITE)
-        config_container.pack(fill=tk.X, pady=(0, 16))
+        # Configuration row
+        config_row = tk.Frame(summary_container, bg=OllamaColors.PURE_WHITE)
+        config_row.pack(fill=tk.X, pady=(0, 16))
 
-        # Configuration row 1: Model + Type
-        config_row1 = tk.Frame(config_container, bg=OllamaColors.PURE_WHITE)
-        config_row1.pack(fill=tk.X, pady=(0, 12))
-
-        # Model selection
         tk.Label(
-            config_row1,
-            text="Model",
-            font=("Segoe UI", 12, "normal"),
-            fg=OllamaColors.PURE_BLACK,
-            bg=OllamaColors.PURE_WHITE,
-        ).pack(side=tk.LEFT)
-
-        self.model_var = tk.StringVar(value="llama3.2:1b")
-        self.model_combo = ttk.Combobox(
-            config_row1,
-            textvariable=self.model_var,
-            values=self.ai_summarizer.get_available_models(),
-            state="readonly",
-            width=18,
-            style="Ollama.TCombobox",
-        )
-        self.model_combo.pack(side=tk.LEFT, padx=(12, 24))
-        self.model_combo.bind("<<ComboboxSelected>>", self.on_model_change)
-
-        # Summary type - Radiobuttons
-        tk.Label(
-            config_row1,
+            config_row,
             text="Kiểu",
-            font=("Segoe UI", 12, "normal"),
+            font=("Segoe UI", 12),
             fg=OllamaColors.PURE_BLACK,
             bg=OllamaColors.PURE_WHITE,
         ).pack(side=tk.LEFT)
 
-        self.summary_type = tk.StringVar(value="normal")
-
-        rb_normal = ttk.Radiobutton(
-            config_row1,
+        ttk.Radiobutton(
+            config_row,
             text="Thông thường",
             variable=self.summary_type,
             value="normal",
             style="Ollama.TRadiobutton",
-        )
-        rb_normal.pack(side=tk.LEFT, padx=(12, 8))
+        ).pack(side=tk.LEFT, padx=(12, 8))
 
-        rb_bullet = ttk.Radiobutton(
-            config_row1,
+        ttk.Radiobutton(
+            config_row,
             text="Điểm chính",
             variable=self.summary_type,
             value="bullet",
             style="Ollama.TRadiobutton",
-        )
-        rb_bullet.pack(side=tk.LEFT)
-
-        # Configuration row 2: Length slider
-        config_row2 = tk.Frame(config_container, bg=OllamaColors.PURE_WHITE)
-        config_row2.pack(fill=tk.X, pady=(0, 12))
+        ).pack(side=tk.LEFT, padx=(0, 24))
 
         tk.Label(
-            config_row2,
-            text="Độ dài",
-            font=("Segoe UI", 12, "normal"),
-            fg=OllamaColors.PURE_BLACK,
-            bg=OllamaColors.PURE_WHITE,
-        ).pack(side=tk.LEFT)
-
-        self.length_var = tk.IntVar(value=500)
-        self.length_slider = ttk.Scale(
-            config_row2,
-            from_=100,
-            to=1000,
-            variable=self.length_var,
-            orient=tk.HORIZONTAL,
-            length=200,
-            style="Ollama.Horizontal.TScale",
-            command=self.update_length_label,
-        )
-        self.length_slider.pack(side=tk.LEFT, padx=(12, 8))
-
-        self.length_label = tk.Label(
-            config_row2,
-            text="500 tu",
+            config_row,
+            text="Dịch",
             font=("Segoe UI", 12),
-            fg=OllamaColors.STONE,
-            bg=OllamaColors.PURE_WHITE,
-            width=8,
-        )
-        self.length_label.pack(side=tk.LEFT)
-
-        # Configuration row 3: Translation + Action buttons
-        config_row3 = tk.Frame(config_container, bg=OllamaColors.PURE_WHITE)
-        config_row3.pack(fill=tk.X)
-
-        tk.Label(
-            config_row3,
-            text="Dịch sang",
-            font=("Segoe UI", 12, "normal"),
             fg=OllamaColors.PURE_BLACK,
             bg=OllamaColors.PURE_WHITE,
         ).pack(side=tk.LEFT)
 
-        self.translate_var = tk.StringVar(value="none")
-        translate_options = ["Tiếng Việt", "English"]
-        translate_values = ["none", "en"]
         self.translate_combo = ttk.Combobox(
-            config_row3,
-            values=translate_options,
+            config_row,
+            values=["Tiếng Việt", "English"],
             state="readonly",
-            width=15,
+            width=12,
             style="Ollama.TCombobox",
         )
         self.translate_combo.current(0)
-        self.translate_combo.pack(side=tk.LEFT, padx=(12, 24))
+        self.translate_combo.pack(side=tk.LEFT, padx=(8, 24))
+        self.translate_combo.bind("<<ComboboxSelected>>", self.on_language_change)
 
-        def on_translate_selected(e):
-            idx = self.translate_combo.current()
-            self.translate_var.set(translate_values[idx])
-            self.on_language_change()
-
-        self.translate_combo.bind("<<ComboboxSelected>>", on_translate_selected)
-
-        # Action buttons
         self.summarize_btn = ttk.Button(
-            config_row3,
+            config_row,
             text="Tóm tắt",
             style="BlackPill.TButton",
             command=self.summarize_file,
@@ -541,43 +544,17 @@ class AISummaryApp:
         )
         self.summarize_btn.pack(side=tk.LEFT, padx=(0, 8))
 
-        self.stop_btn = ttk.Button(
-            config_row3,
-            text="STOP",
-            style="StopPill.TButton",
-            command=self.stop_summarization,
-            state="disabled",
+        # Result area
+        result_frame = tk.Frame(
+            summary_container, bg=OllamaColors.SNOW, relief="solid", bd=1
         )
-        self.stop_btn.pack(side=tk.LEFT)
-
-        # ==== CONTENT AREA - Tabs ====
-        tabs_container = tk.Frame(main_container, bg=OllamaColors.PURE_WHITE)
-        tabs_container.pack(fill=tk.BOTH, expand=True, pady=(0, 16))
-
-        # Notebook with Ollama styling
-        self.notebook = ttk.Notebook(tabs_container, style="Ollama.TNotebook")
-        self.notebook.pack(fill=tk.BOTH, expand=True)
-
-        # Tab 1: Summary
-        summary_tab = tk.Frame(self.notebook, bg=OllamaColors.PURE_WHITE)
-        self.notebook.add(summary_tab, text="Tóm tắt")
-
-        summary_tab.columnconfigure(0, weight=1)
-        summary_tab.rowconfigure(0, weight=1)
-
-        # Result text area - clean border, no shadow
-        result_frame = tk.Frame(summary_tab, bg=OllamaColors.SNOW, relief="solid", bd=1)
-        result_frame.grid(
-            row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=0, pady=(0, 12)
-        )
+        result_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 16))
 
         self.result_text = scrolledtext.ScrolledText(
             result_frame,
             wrap=tk.WORD,
             font=("system-ui", 13),
             bg=OllamaColors.SNOW,
-            fg=OllamaColors.PURE_BLACK,
-            insertbackground=OllamaColors.PURE_BLACK,
             relief="flat",
             bd=0,
             padx=16,
@@ -586,9 +563,36 @@ class AISummaryApp:
         )
         self.result_text.pack(fill=tk.BOTH, expand=True)
 
-        # Tab action buttons
-        tab_actions = tk.Frame(summary_tab, bg=OllamaColors.PURE_WHITE)
-        tab_actions.grid(row=1, column=0, sticky=tk.W)
+        # Q&A section
+        qa_frame = tk.Frame(summary_container, bg=OllamaColors.PURE_WHITE)
+        qa_frame.pack(fill=tk.X, pady=(0, 16))
+
+        tk.Label(
+            qa_frame,
+            text="Hỏi đáp:",
+            font=("Segoe UI", 12),
+            fg=OllamaColors.PURE_BLACK,
+            bg=OllamaColors.PURE_WHITE,
+        ).pack(side=tk.LEFT)
+
+        self.qa_entry = ttk.Entry(
+            qa_frame, style="Ollama.TEntry", font=("Segoe UI", 12)
+        )
+        self.qa_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(12, 8))
+        self.qa_entry.bind("<Return>", lambda e: self.ask_about_file())
+
+        self.ask_btn = ttk.Button(
+            qa_frame,
+            text="Hỏi",
+            style="GrayPill.TButton",
+            command=self.ask_about_file,
+            state="disabled",
+        )
+        self.ask_btn.pack(side=tk.LEFT)
+
+        # Action buttons
+        tab_actions = tk.Frame(summary_container, bg=OllamaColors.PURE_WHITE)
+        tab_actions.pack(fill=tk.X)
 
         self.copy_btn = ttk.Button(
             tab_actions,
@@ -608,129 +612,121 @@ class AISummaryApp:
         )
         self.save_btn.pack(side=tk.LEFT)
 
-        # Tab 2: Q&A
-        qa_tab = tk.Frame(self.notebook, bg=OllamaColors.PURE_WHITE)
-        self.qa_tab = qa_tab
-        self.notebook.add(qa_tab, text="Hỏi đáp", state="disabled")
+    def create_status_bar(self):
+        """Create status bar"""
+        status_frame = tk.Frame(self.main_container, bg=OllamaColors.PURE_WHITE)
+        status_frame.pack(fill=tk.X, pady=(8, 0))
 
-        qa_tab.columnconfigure(0, weight=1)
-        qa_tab.rowconfigure(0, weight=1)
-
-        # Q&A text area
-        qa_frame = tk.Frame(qa_tab, bg=OllamaColors.SNOW, relief="solid", bd=1)
-        qa_frame.grid(
-            row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=0, pady=(0, 12)
-        )
-
-        self.qa_text = scrolledtext.ScrolledText(
-            qa_frame,
-            wrap=tk.WORD,
-            font=("system-ui", 13),
-            bg=OllamaColors.SNOW,
-            fg=OllamaColors.PURE_BLACK,
-            insertbackground=OllamaColors.PURE_BLACK,
-            relief="flat",
-            bd=0,
-            padx=16,
-            pady=16,
-            state="disabled",
-        )
-        self.qa_text.pack(fill=tk.BOTH, expand=True)
-
-        # Q&A input row
-        qa_input_row = tk.Frame(qa_tab, bg=OllamaColors.PURE_WHITE)
-        qa_input_row.grid(row=1, column=0, sticky=(tk.W, tk.E))
-        qa_input_row.columnconfigure(0, weight=1)
-
-        self.question_entry = ttk.Entry(
-            qa_input_row, style="Ollama.TEntry", font=("system-ui", 13)
-        )
-        self.question_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 12))
-
-        def on_enter(event):
-            self.ask_question()
-            return "break"
-
-        self.question_entry.bind("<Return>", on_enter)
-
-        self.ask_btn = ttk.Button(
-            qa_input_row,
-            text="Hỏi",
-            style="GrayPill.TButton",
-            command=self.ask_question,
-        )
-        self.ask_btn.grid(row=0, column=1)
-
-        # ==== FOOTER SECTION ====
-        footer_frame = tk.Frame(main_container, bg=OllamaColors.PURE_WHITE)
-        footer_frame.pack(fill=tk.X, pady=(8, 0))
-
-        # Progress bar
         self.progress = ttk.Progressbar(
-            footer_frame,
+            status_frame,
             mode="indeterminate",
-            length=300,
+            length=200,
             style="Ollama.Horizontal.TProgressbar",
         )
-        self.progress.pack(pady=(0, 12))
+        self.progress.pack(side=tk.LEFT, pady=(0, 8))
 
-        # Status label - minimal
         self.status_label = tk.Label(
-            footer_frame,
+            status_frame,
             text="Sẵn sàng",
-            font=("Segoe UI", 12),
+            font=("Segoe UI", 11),
             fg=OllamaColors.STONE,
             bg=OllamaColors.PURE_WHITE,
-            anchor="center",
         )
-        self.status_label.pack()
+        self.status_label.pack(side=tk.LEFT, padx=(16, 0))
+
+    # ========== CHAT METHODS ==========
+
+    def send_chat_message(self):
+        """Send chat message to AI"""
+        message = self.chat_entry.get().strip()
+        if not message:
+            return
+
+        self.chat_entry.delete(0, tk.END)
+        self.send_btn.config(state="disabled")
+
+        self.add_chat_message("user", message)
+
+        self.progress.start(10)
+        self.status_label.config(text="AI đang trả lời...", fg=OllamaColors.MID_GRAY)
+
+        thread = threading.Thread(
+            target=self.get_ai_response, args=(message,), daemon=True
+        )
+        thread.start()
+
+    def add_chat_message(self, role, content):
+        """Add message to chat"""
+        timestamp = datetime.now().strftime("%H:%M")
+
+        self.chat_scroll.config(state="normal")
+
+        if role == "user":
+            self.chat_scroll.insert(tk.END, f"\n[{timestamp}] Bạn:\n", "timestamp")
+            self.chat_scroll.insert(tk.END, f"{content}\n", "user")
+        elif role == "ai":
+            self.chat_scroll.insert(tk.END, f"\n[{timestamp}] AI:\n", "timestamp")
+            self.chat_scroll.insert(tk.END, f"{content}\n", "ai")
+        else:
+            self.chat_scroll.insert(tk.END, f"\n{content}\n", "system")
+
+        self.chat_scroll.see(tk.END)
+        self.chat_scroll.config(state="disabled")
+
+    def get_ai_response(self, user_message):
+        """Get AI response"""
+        try:
+            import ollama
+
+            response = ollama.chat(
+                model=self.model_var.get(),
+                messages=[{"role": "user", "content": user_message}],
+            )
+
+            ai_response = response["message"]["content"].strip()
+
+            def update_ui():
+                self.add_chat_message("ai", ai_response)
+                self.progress.stop()
+                self.send_btn.config(state="normal")
+                self.status_label.config(text="Sẵn sàng", fg=OllamaColors.STONE)
+
+            self.root.after(0, update_ui)
+
+        except Exception as e:
+
+            def show_error():
+                self.add_chat_message("ai", f"Lỗi: {str(e)}")
+                self.progress.stop()
+                self.send_btn.config(state="normal")
+                self.status_label.config(text="Lỗi!", fg=OllamaColors.STONE)
+
+            self.root.after(0, show_error)
+
+    # ========== CONFIG METHODS ==========
 
     def update_length_label(self, value):
-        """Update length display label"""
         length = int(float(value))
         self.length_label.config(text=f"{length} từ")
 
-    def on_language_change(self):
-        """Auto-translate when language selection changes"""
+    # ========== SUMMARY METHODS ==========
+
+    def on_language_change(self, event=None):
+        """Handle language change"""
         if not self.current_summary or not self.original_summary:
             return
 
         selected_lang = self.translate_combo.get()
 
         if selected_lang == "Tiếng Việt":
-            self.result_text.config(state="normal")
-            self.result_text.delete(1.0, tk.END)
-            word_info = f"Gốc: {self.original_word_count} từ | Tóm tắt: {len(self.original_summary.split())} từ\n\n"
-            self.result_text.insert(
-                1.0, f"KẾT QUẢ (Tiếng Việt):\n\n{word_info}{self.original_summary}"
-            )
-            self.current_summary = self.original_summary
-            self.current_summary_language = "vi"
-            self.result_text.config(state="disabled")
-            self.status_label.config(
-                text="Hiển thị bản Tiếng Việt", fg=OllamaColors.STONE
-            )
+            self.display_summary_text(self.original_summary)
             return
 
         if "English" in self.translation_cache:
-            translated = self.translation_cache["English"]
-            self.result_text.config(state="normal")
-            self.result_text.delete(1.0, tk.END)
-            word_info = f"Original: {self.original_word_count} words | Summary: {len(translated.split())} words\n\n"
-            self.result_text.insert(
-                1.0, f"RESULT (English):\n\n{word_info}{translated}"
-            )
-            self.current_summary = translated
-            self.current_summary_language = "en"
-            self.result_text.config(state="disabled")
-            self.status_label.config(
-                text="Showing English version (from cache)", fg=OllamaColors.STONE
-            )
+            self.display_summary_text(self.translation_cache["English"])
             return
 
-        self.status_label.config(
-            text="Đang dịch sang English...", fg=OllamaColors.MID_GRAY
-        )
+        self.status_label.config(text="Đang dịch...", fg=OllamaColors.MID_GRAY)
         self.progress.start(10)
 
         thread = threading.Thread(
@@ -741,18 +737,11 @@ class AISummaryApp:
         thread.start()
 
     def translate_summary_thread(self, text):
-        """Thread for translating text to English"""
+        """Translate text to English"""
         try:
-            prompt = f"""Translate the following Vietnamese text to English. 
-Keep the formatting and structure. Only provide the English translation, no explanations.
-
-Vietnamese text:
-{text}
-
-English translation:"""
-
             import ollama
 
+            prompt = f"Translate to English:\n\n{text}"
             response = ollama.chat(
                 model=self.model_var.get(),
                 messages=[{"role": "user", "content": prompt}],
@@ -760,34 +749,25 @@ English translation:"""
 
             translated = response["message"]["content"].strip()
             self.translation_cache["English"] = translated
-            self.root.after(0, self.display_translation, translated)
+            self.root.after(0, lambda: self.display_summary_text(translated))
 
         except Exception as e:
-            self.root.after(0, self.show_translation_error, str(e))
+            self.root.after(
+                0,
+                lambda: self.status_label.config(
+                    text=f"Lỗi dịch", fg=OllamaColors.STONE
+                ),
+            )
 
-    def display_translation(self, translated_text):
-        """Display English translation"""
-        self.result_text.config(state="normal")
-        self.result_text.delete(1.0, tk.END)
-        word_info = f"Original: {self.original_word_count} words | Summary: {len(translated_text.split())} words\n\n"
-        self.result_text.insert(
-            1.0, f"RESULT (English):\n\n{word_info}{translated_text}"
-        )
-        self.current_summary = translated_text
-        self.current_summary_language = "en"
-        self.result_text.config(state="disabled")
-
-        words = len(translated_text.split())
-        self.status_label.config(
-            text=f"Đã dịch sang English ({words} từ)", fg=OllamaColors.STONE
-        )
+    def display_summary_text(self, text):
+        """Display summary text"""
+        if hasattr(self, "result_text"):
+            self.result_text.config(state="normal")
+            self.result_text.delete(1.0, tk.END)
+            self.result_text.insert(1.0, text)
+            self.result_text.config(state="disabled")
         self.progress.stop()
-
-    def show_translation_error(self, error):
-        """Show translation error"""
-        self.status_label.config(text=f"Lỗi dịch: {error}", fg=OllamaColors.STONE)
-        self.progress.stop()
-        messagebox.showerror("Lỗi dịch", f"Không thể dịch: {error}")
+        self.status_label.config(text="Xong", fg=OllamaColors.STONE)
 
     def select_file(self):
         """Handle file selection"""
@@ -806,10 +786,12 @@ English translation:"""
             import os
 
             file_name = os.path.basename(file_path)
-            self.file_label.config(text=file_name, fg=OllamaColors.PURE_BLACK)
-            self.summarize_btn.config(state="normal")
 
-            self.notebook.tab(1, state="normal")
+            if hasattr(self, "file_label"):
+                self.file_label.config(text=file_name, fg=OllamaColors.PURE_BLACK)
+            if hasattr(self, "summarize_btn"):
+                self.summarize_btn.config(state="normal")
+
             try:
                 self.original_content = self.file_reader.read_file(file_path)
                 self.original_word_count = len(self.original_content.split())
@@ -817,17 +799,14 @@ English translation:"""
                 messagebox.showerror("Lỗi", f"Không thể đọc file: {str(e)}")
                 self.original_content = ""
 
-            self.result_text.config(state="normal")
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(
-                1.0, f"File đã chọn: {file_name}\n\nNhấn nút 'Tóm tắt' để bắt đầu..."
-            )
-            self.result_text.config(state="disabled")
-
-    def on_model_change(self, event):
-        """Handle model change"""
-        selected_model = self.model_var.get()
-        self.ai_summarizer.set_model(selected_model)
+            if hasattr(self, "result_text"):
+                self.result_text.config(state="normal")
+                self.result_text.delete(1.0, tk.END)
+                self.result_text.insert(
+                    1.0,
+                    f"File: {file_name}\n({self.original_word_count} từ)\n\nNhấn 'Tóm tắt' để xử lý...",
+                )
+                self.result_text.config(state="disabled")
 
     def summarize_file(self):
         """Handle file summarization"""
@@ -835,27 +814,27 @@ English translation:"""
             messagebox.showwarning("Cảnh báo", "Vui lòng chọn file trước!")
             return
 
-        self.select_btn.config(state="disabled")
-        self.summarize_btn.config(state="disabled")
-        self.stop_btn.config(state="normal")
+        if hasattr(self, "select_btn"):
+            self.select_btn.config(state="disabled")
+        if hasattr(self, "summarize_btn"):
+            self.summarize_btn.config(state="disabled")
         self.stop_event.clear()
 
         self.progress.start(10)
         self.status_label.config(text="Đang xử lý...", fg=OllamaColors.MID_GRAY)
 
-        self.result_text.config(state="normal")
-        self.result_text.delete(1.0, tk.END)
-        self.result_text.insert(1.0, "Đang đọc file và tóm tắt...\nVui lòng chờ...\n\n")
-        self.result_text.config(state="disabled")
+        if hasattr(self, "result_text"):
+            self.result_text.config(state="normal")
+            self.result_text.delete(1.0, tk.END)
+            self.result_text.insert(1.0, "Đang tóm tắt...\nVui lòng chờ...\n")
+            self.result_text.config(state="disabled")
 
-        self.summary_thread = threading.Thread(target=self._do_summarize)
-        self.summary_thread.daemon = True
-        self.summary_thread.start()
+        thread = threading.Thread(target=self._do_summarize, daemon=True)
+        thread.start()
 
     def _do_summarize(self):
         """Perform summarization"""
         try:
-            self.update_status("Đang đọc file...")
             content = self.file_reader.read_file(self.current_file)
 
             if not content.strip():
@@ -864,153 +843,148 @@ English translation:"""
             self.original_content = content
             self.original_word_count = len(content.split())
 
-            self.update_status(f"Đang tóm tắt với model {self.model_var.get()}...")
+            max_length = self.length_var.get() if hasattr(self, "length_var") else 500
+            summary_type = (
+                self.summary_type.get() if hasattr(self, "summary_type") else "normal"
+            )
 
-            if self.stop_event.is_set():
-                self.display_result("Đã dừng!", success=False)
-                return
-
-            max_length = self.length_var.get()
-
-            if self.summary_type.get() == "bullet":
+            if summary_type == "bullet":
                 summary = self.ai_summarizer.summarize_with_bullet_points(content)
             else:
                 summary = self.ai_summarizer.summarize(content, max_length=max_length)
 
-            if self.translate_var.get() != "none":
-                self.update_status(f"Đang dịch sang {self.translate_combo.get()}...")
-                summary = self.translate_text(summary, self.translate_var.get())
+            self.original_summary = summary
+            self.current_summary = summary
+            self.translation_cache = {}
 
-            self.display_result(summary, success=True)
+            self.display_result(summary)
+
         except Exception as e:
             self.display_result(f"Lỗi: {str(e)}", success=False)
 
-    def translate_text(self, text, target_lang):
-        """Translate text to target language"""
-        lang_names = {"en": "English", "vi": "Vietnamese (Tiếng Việt)"}
+    def display_result(self, result, success=True):
+        """Display summarization result"""
 
-        prompt = f"""Translate the following text to {lang_names.get(target_lang, target_lang)}.
-Only return the translated text, no explanations.
+        def update_ui():
+            self.progress.stop()
 
-Text to translate:
-{text}
+            if hasattr(self, "result_text"):
+                self.result_text.config(state="normal")
+                self.result_text.delete(1.0, tk.END)
 
-Translation:"""
+            if success:
+                self.summary_word_count = len(result.split())
+                info = f"Gốc: {self.original_word_count} từ | Tóm tắt: {self.summary_word_count} từ\n\n"
+                if hasattr(self, "result_text"):
+                    self.result_text.insert(1.0, f"{info}{result}")
+                self.status_label.config(text="Hoàn thành!", fg=OllamaColors.STONE)
+                if hasattr(self, "copy_btn"):
+                    self.copy_btn.config(state="normal")
+                if hasattr(self, "save_btn"):
+                    self.save_btn.config(state="normal")
+            else:
+                if hasattr(self, "result_text"):
+                    self.result_text.insert(1.0, result)
+                self.status_label.config(text="Lỗi!", fg=OllamaColors.STONE)
+                if hasattr(self, "copy_btn"):
+                    self.copy_btn.config(state="disabled")
+                if hasattr(self, "save_btn"):
+                    self.save_btn.config(state="disabled")
 
+            if hasattr(self, "result_text"):
+                self.result_text.config(state="disabled")
+            if hasattr(self, "select_btn"):
+                self.select_btn.config(state="normal")
+            if hasattr(self, "summarize_btn"):
+                self.summarize_btn.config(state="normal")
+            if hasattr(self, "ask_btn") and success:
+                self.ask_btn.config(state="normal")
+
+        self.root.after(0, update_ui)
+
+    def ask_about_file(self):
+        """Ask AI about the file content"""
+        question = self.qa_entry.get().strip()
+        if not question:
+            return
+
+        if not self.original_content:
+            messagebox.showwarning("Cảnh báo", "Chưa có nội dung file!")
+            return
+
+        self.qa_entry.delete(0, tk.END)
+        if hasattr(self, "ask_btn"):
+            self.ask_btn.config(state="disabled")
+
+        self.progress.start(10)
+        self.status_label.config(text="Đang trả lời...", fg=OllamaColors.MID_GRAY)
+
+        if hasattr(self, "result_text"):
+            self.result_text.config(state="normal")
+            self.result_text.insert(tk.END, "\n\nĐang hỏi...\n")
+            self.result_text.see(tk.END)
+            self.result_text.config(state="disabled")
+
+        thread = threading.Thread(target=self._do_ask, args=(question,), daemon=True)
+        thread.start()
+
+    def _do_ask(self, question):
+        """Get answer about file content"""
         try:
+            prompt = f"""Bạn là trợ lý AI đọc và trả lời câu hỏi dựa trên văn bản được cung cấp.
+
+QUY TẮC:
+1. Đọc KỸ văn bản bên dưới
+2. Trả lời câu hỏi dựa trên THÔNG TIN TRONG VĂN BẢN
+3. Nếu câu hỏi liên quan đến chủ đề/cụm từ có trong văn bản → TRẢ LỜI bằng thông tin đó
+4. Nếu câu hỏi hỏi về khái niệm (ví dụ "railway là gì") mà văn bản đề cập → dùng THÔNG TIN TRONG VĂN BẢN để giải thích
+5. Trả lời NGẮN GỌN, ĐI THẲNG VÀO VẤN ĐỀ
+6. Dùng tiếng Việt
+
+VĂN BẢN:
+{self.original_content}
+
+CÂU HỎI: {question}
+
+TRẢ LỜI:"""
+
             import ollama
 
             response = ollama.chat(
                 model=self.model_var.get(),
                 messages=[{"role": "user", "content": prompt}],
             )
-            return response["message"]["content"].strip()
-        except Exception as e:
-            return f"[Lỗi dịch: {str(e)}]\n\n{text}"
 
-    def ask_question(self):
-        """Handle Q&A about the document"""
-        question = self.question_entry.get().strip()
-        if not question:
-            messagebox.showwarning("Cảnh báo", "Vui lòng nhập câu hỏi!")
-            return
+            answer = response["message"]["content"].strip()
 
-        if not self.original_content:
-            messagebox.showwarning("Cảnh báo", "Vui lòng chọn file trước!")
-            return
-
-        self.question_entry.delete(0, tk.END)
-        self.ask_btn.config(state="disabled")
-        self.question_entry.config(state="disabled")
-
-        self.progress.start(10)
-        self.status_label.config(text="Đang suy nghĩ...", fg=OllamaColors.MID_GRAY)
-
-        self.qa_text.config(state="normal")
-        self.qa_text.insert(tk.END, f"\n{'='*50}\n")
-        self.qa_text.insert(tk.END, f"Câu hỏi: {question}\n\n")
-        self.qa_text.insert(tk.END, "Đang suy nghĩ... Vui lòng chờ...\n")
-        self.qa_text.see(tk.END)
-        self.qa_text.config(state="disabled")
-
-        def do_qa():
-            try:
-                prompt = f"""Based on the following text, answer the question.
-
-Text:
-{self.original_content[:3000]}
-
-Question: {question}
-
-Answer:"""
-
-                import ollama
-
-                response = ollama.chat(
-                    model=self.model_var.get(),
-                    messages=[{"role": "user", "content": prompt}],
-                )
-                answer = response["message"]["content"].strip()
-
-                def update_qa():
-                    self.qa_text.config(state="normal")
-                    content = self.qa_text.get(1.0, tk.END)
-                    if "Đang suy nghĩ" in content:
-                        self.qa_text.delete("end-2l", "end-1l")
-                    self.qa_text.insert(tk.END, f"Trả lời: {answer}\n")
-                    self.qa_text.see(tk.END)
-                    self.qa_text.config(state="disabled")
-                    self.question_entry.config(state="normal")
-                    self.question_entry.focus()
-                    self.ask_btn.config(state="normal")
-                    self.progress.stop()
-                    self.status_label.config(
-                        text="Hoàn thành Q&A!", fg=OllamaColors.STONE
+            def update_ui():
+                self.progress.stop()
+                if hasattr(self, "result_text"):
+                    self.result_text.config(state="normal")
+                    self.result_text.insert(
+                        tk.END, f"\n\nCâu hỏi: {question}\n\nĐáp: {answer}\n"
                     )
-
-                self.root.after(0, update_qa)
-
-            except Exception as e:
-
-                def show_error():
-                    self.qa_text.config(state="normal")
-                    content = self.qa_text.get(1.0, tk.END)
-                    if "Đang suy nghĩ" in content:
-                        self.qa_text.delete("end-2l", "end-1l")
-                    self.qa_text.insert(tk.END, f"Lỗi: {str(e)}\n")
-                    self.qa_text.see(tk.END)
-                    self.qa_text.config(state="disabled")
-                    self.question_entry.config(state="normal")
+                    self.result_text.see(tk.END)
+                    self.result_text.config(state="disabled")
+                if hasattr(self, "ask_btn"):
                     self.ask_btn.config(state="normal")
-                    self.progress.stop()
-                    self.status_label.config(text="Loi!", fg=OllamaColors.STONE)
+                self.status_label.config(text="Sẵn sàng", fg=OllamaColors.STONE)
 
-                self.root.after(0, show_error)
+            self.root.after(0, update_ui)
 
-        qa_thread = threading.Thread(target=do_qa)
-        qa_thread.daemon = True
-        qa_thread.start()
+        except Exception as e:
 
-    def stop_summarization(self):
-        """Stop AI processing"""
-        self.stop_event.set()
-        self.progress.stop()
-        self.status_label.config(text="Đã dừng!", fg=OllamaColors.STONE)
-        self.stop_btn.config(state="disabled")
-        self.select_btn.config(state="normal")
-        self.summarize_btn.config(state="normal")
+            def show_error():
+                self.progress.stop()
+                if hasattr(self, "result_text"):
+                    self.result_text.config(state="normal")
+                    self.result_text.insert(tk.END, f"\n\nLỗi: {str(e)}\n")
+                    self.result_text.config(state="disabled")
+                if hasattr(self, "ask_btn"):
+                    self.ask_btn.config(state="normal")
+                self.status_label.config(text="Lỗi!", fg=OllamaColors.STONE)
 
-    def update_status(self, message):
-        """Update status message"""
-        self.root.after(
-            0, lambda: self.status_label.config(text=message, fg=OllamaColors.MID_GRAY)
-        )
-        self.root.after(
-            0,
-            lambda: self.result_text.config(state="normal")
-            or self.result_text.insert(tk.END, f"{message}\n")
-            or self.result_text.config(state="disabled"),
-        )
+            self.root.after(0, show_error)
 
     def copy_result(self):
         """Copy result to clipboard"""
@@ -1018,15 +992,15 @@ Answer:"""
             self.root.clipboard_clear()
             self.root.clipboard_append(self.current_summary)
             self.root.update()
-            messagebox.showinfo("Thành công", "Đã copy vào clipboard!")
-        else:
-            messagebox.showwarning("Cảnh báo", "Không có kết quả!")
+            messagebox.showinfo("Thành công", "Đã copy!")
 
     def save_result(self):
         """Save result to file"""
         if not self.current_summary:
-            messagebox.showwarning("Cảnh báo", "Không có kết quả để lưu!")
+            messagebox.showwarning("Cảnh báo", "Không có kết quả!")
             return
+
+        import os
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         default_filename = f"summary_{timestamp}.txt"
@@ -1042,55 +1016,12 @@ Answer:"""
             try:
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.write(self.current_summary)
-                messagebox.showinfo("Thành công", f"Đã lưu vào:\n{file_path}")
+                messagebox.showinfo("Thành công", f"Đã lưu!")
             except Exception as e:
                 messagebox.showerror("Lỗi", f"Không thể lưu: {str(e)}")
 
-    def display_result(self, result, success=True):
-        """Display summarization result"""
-
-        def update_ui():
-            self.progress.stop()
-            self.result_text.config(state="normal")
-            self.result_text.delete(1.0, tk.END)
-
-            if success:
-                self.summary_word_count = len(result.split())
-                word_info = f"Gốc: {self.original_word_count} từ | Tóm tắt: {self.summary_word_count} từ\n\n"
-
-                self.result_text.insert(1.0, f"KẾT QUẢ:\n\n{word_info}{result}")
-                self.status_label.config(text="Hoàn thành!", fg=OllamaColors.STONE)
-
-                self.original_summary = result
-                self.current_summary = result
-                self.current_summary_language = "vi"
-                self.translation_cache = {}
-
-                self.translate_combo.set("Tiếng Việt")
-
-                self.copy_btn.config(state="normal")
-                self.save_btn.config(state="normal")
-                self.ask_btn.config(state="normal")
-
-                self.word_count_label.config(
-                    text=f"{self.original_word_count} từ | {self.summary_word_count} từ"
-                )
-            else:
-                self.result_text.insert(1.0, f"Lỗi: {result}")
-                self.status_label.config(text="Loi!", fg=OllamaColors.STONE)
-                self.current_summary = ""
-                self.copy_btn.config(state="disabled")
-                self.save_btn.config(state="disabled")
-
-            self.result_text.config(state="disabled")
-            self.select_btn.config(state="normal")
-            self.summarize_btn.config(state="normal")
-
-        self.root.after(0, update_ui)
-
 
 def main():
-    """Main function"""
     root = tk.Tk()
     app = AISummaryApp(root)
     root.mainloop()

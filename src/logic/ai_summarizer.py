@@ -42,31 +42,44 @@ class AISummarizer:
         """
         return self.available_models
 
-    def summarize(self, text, max_length=5000):
+    def summarize(self, text, max_length=500):
         """
         Tóm tắt văn bản sử dụng Ollama
 
         Args:
             text (str): Văn bản cần tóm tắt
-            max_length (int): Độ dài tóm tắt tối đa (mặc định: 5000 từ)
+            max_length (int): Độ dài tóm tắt mong muốn (mặc định: 500 từ)
 
         Returns:
             str: Văn bản đã được tóm tắt
         """
         try:
-            # Tạo prompt cho AI
-            prompt = f"""Bạn là một trợ lý AI chuyên tóm tắt văn bản. 
-Hãy đọc văn bản dưới đây và tạo một bản tóm tắt, không quá {max_length} từ. 
-Nhưng cũng đừng ngắn quá, ít nhất phải 500 từ trở lên trừ khi văn bản quá ngắn.
-Đối với tóm tắt thường, ít nhất phải ít nhất phải dài hơn 20% so với văn bản gốc.
-Đối với tóm tắt điểm chính (bullet points), hãy cung cấp từ 5 đến 10 điểm chính.
-Tóm tắt bằng tiếng Việt nếu văn bản gốc là tiếng Việt, hoặc bằng tiếng Anh nếu văn bản gốc là tiếng Anh.
-Chỉ trả về phần tóm tắt, không thêm lời giải thích.
+            word_count = len(text.split())
 
-Văn bản cần tóm tắt:
+            # Điều chỉnh độ dài target dựa trên văn bản gốc
+            if word_count < 200:
+                target_length = word_count
+            elif word_count < 500:
+                target_length = min(200, word_count // 2)
+            elif word_count < 1000:
+                target_length = min(300, word_count // 3)
+            else:
+                target_length = min(max_length, word_count // 4)
+
+            prompt = f"""Bạn là một chuyên gia soạn thảo văn bản. Nhiệm vụ của bạn là viết bản tóm tắt CHUYÊN NGHIỆP từ văn bản cho sẵn.
+
+QUY TẮC NGHIÊM NGẶT:
+1. Viết bản tóm tắt khoảng {target_length} từ, đủ dài để nắm bắt ý chính
+2. Viết theo định dạng đoạn văn MẠCH LẠC, không dùng danh sách bullet points
+3. KHÔNG VIẾT bất kỳ câu nào mang tính mô tả về bản tóm tắt (ví dụ: "Bản tóm tắt này...", "Tóm lại...", "Như đã nêu trên...")
+4. KHÔNG THÊM lời kết thúc như "Bản tóm tắt có..." hoặc bất kỳ dòng mô tả nào về độ dài, chất lượng
+5. Chỉ viết nội dung tóm tắt thuần túy, đi thẳng vào vấn đề
+6. Dùng tiếng Việt, viết tự nhiên như đang viết văn
+
+VĂN BẢN GỐC:
 {text}
 
-Tóm tắt:"""
+BẢN TÓM TẮT:"""
 
             # Gọi Ollama API
             response = ollama.chat(
@@ -97,14 +110,18 @@ Tóm tắt:"""
             str: Các điểm chính của văn bản
         """
         try:
-            prompt = f"""Bạn là một trợ lý AI chuyên tóm tắt văn bản.
-Hãy đọc văn bản dưới đây và liệt kê các ý chính dưới dạng bullet points (5-10 điểm).
-Trả lời bằng tiếng Việt nếu văn bản gốc là tiếng Việt, hoặc bằng tiếng Anh nếu văn bản gốc là tiếng Anh.
+            prompt = f"""Bạn là một chuyên gia tóm tắt văn bản. Nhiệm vụ của bạn là trích xuất các ý chính quan trọng nhất từ văn bản.
 
-Văn bản:
-{text}
+QUY TẮC NGHIÊM NGẶT:
+1. Liệt kê TỪ 5 ĐẾN 10 điểm chính quan trọng nhất
+2. Mỗi điểm viết NGẮN GỌN (1-2 dòng), dùng dấu • ở đầu
+3. KHÔNG có tiêu đề như "Các điểm chính:", "Tóm tắt:", hay bất kỳ lời mở đầu nào
+4. BẮT ĐẦU NGAY bằng bullet point đầu tiên
+5. Ưu tiên: quyết định, mục tiêu, lợi ích, chi phí, thông tin quan trọng
+6. Dùng tiếng Việt
 
-Các điểm chính:"""
+VĂN BẢN:
+{text}"""
 
             response = ollama.chat(
                 model=self.model_name,
